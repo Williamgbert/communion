@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Communion Explainer - Interactive Learning</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
+        
+        body {
+            font-family: 'Crimson Text', serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #f8f9ff 0%, #e8f4fd 100%);
+            min-height: 100vh;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: Arial, Helvetica, sans-serif;
+            color: #383f94;
+            margin-bottom: 1rem;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        .header {
+            text-align: center;
+            padding: 2rem 0;
+            background: linear-gradient(135deg, #383f94 0%, #00adee 100%);
+            color: white;
+            margin-bottom: 2rem;
+            border-radius: 0 0 20px 20px;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        .section {
+            background: white;
+            margin-bottom: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(56, 63, 148, 0.1);
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .section:hover {
+            transform: translateY(-2px);
+        }
+
+        .section-header {
+            background: linear-gradient(135deg, #383f94 0%, #00adee 100%);
+            color: white;
+            padding: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .section-header:hover {
+            background: linear-gradient(135deg, #2d3478 0%, #0099cc 100%);
+        }
+
+        .section-header h2 {
+            color: white;
+            margin: 0;
+            font-size: 1.3rem;
+        }
+
+        .toggle-icon {
+            font-size: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .section-content {
+            padding: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .section-content.active {
+            max-height: 2000px;
+            padding: 2rem;
+        }
+
+        .scripture-verse {
+            background: linear-gradient(135deg, #f0f2ff 0%, #e8f8ff 100%);
+            border-left: 4px solid #00adee;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 10px 10px 0;
+            position: relative;
+        }
+
+        .scripture-verse::before {
+            content: '"';
+            font-size: 3rem;
+            color: #00adee;
+            position: absolute;
+            top: -10px;
+            left: 10px;
+            opacity: 0.3;
+        }
+
+        .verse-reference {
+            font-weight: bold;
+            color: #383f94;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline;
+            color: #00adee;
+            cursor: pointer;
+            border-bottom: 1px dotted #00adee;
+        }
+
+        .tooltip-content {
+            position: absolute;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #383f94;
+            color: white;
+            padding: 0.8rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            width: 250px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .tooltip:hover .tooltip-content {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .tooltip-content::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 8px solid transparent;
+            border-top-color: #383f94;
+        }
+
+        .church-father-quote {
+            background: linear-gradient(135deg, #fff8e1 0%, #f0f8ff 100%);
+            border-left: 4px solid #383f94;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 10px 10px 0;
+            font-style: italic;
+        }
+
+        .quote-author {
+            font-weight: bold;
+            color: #383f94;
+            margin-top: 1rem;
+            font-style: normal;
+        }
+
+        .quiz-container {
+            background: linear-gradient(135deg, #f8f9ff 0%, #e8f8ff 100%);
+            padding: 2rem;
+            border-radius: 15px;
+            margin: 2rem 0;
+        }
+
+        .quiz-question {
+            font-weight: bold;
+            color: #383f94;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .quiz-options {
+            display: grid;
+            gap: 0.8rem;
+        }
+
+        .quiz-option {
+            background: white;
+            border: 2px solid #e0e0e0;
+            padding: 1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .quiz-option:hover {
+            border-color: #00adee;
+            background: #f0f8ff;
+        }
+
+        .quiz-option.correct {
+            border-color: #4caf50;
+            background: #e8f5e8;
+        }
+
+        .quiz-option.incorrect {
+            border-color: #f44336;
+            background: #ffeaea;
+        }
+
+        .reflection-area {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .reflection-textarea {
+            width: 100%;
+            min-height: 120px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: 'Crimson Text', serif;
+            font-size: 1rem;
+            resize: vertical;
+        }
+
+        .reflection-textarea:focus {
+            outline: none;
+            border-color: #00adee;
+            box-shadow: 0 0 0 3px rgba(0, 173, 238, 0.1);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #383f94 0%, #00adee 100%);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            margin: 0.5rem 0.5rem 0.5rem 0;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(56, 63, 148, 0.3);
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 2rem;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 1rem;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, #383f94, #00adee);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 2rem;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -2.5rem;
+            top: 1.5rem;
+            width: 12px;
+            height: 12px;
+            background: #00adee;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 0 0 3px #00adee;
+        }
+
+        .timeline-date {
+            font-weight: bold;
+            color: #383f94;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-bar {
+            background: #e0e0e0;
+            height: 6px;
+            border-radius: 3px;
+            margin: 2rem 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #383f94 0%, #00adee 100%);
+            height: 100%;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0.5rem;
+            }
+            
+            .header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .tooltip-content {
+                width: 200px;
+                font-size: 0.8rem;
+            }
+            
+            .timeline {
+                padding-left: 1.5rem;
+            }
+            
+            .timeline::before {
+                left: 0.75rem;
+            }
+            
+            .timeline-item::before {
+                left: -2rem;
+            }
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Communion Explainer</h1>
+        <p>Interactive Learning Journey Through the Sacred Sacrament</p>
+    </div>
+
+    <div class="container">
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <!-- Introduction Section -->
+        <div class="section fade-in">
+            <div class="section-header" onclick="toggleSection(this)">
+                <h2>🍞 Introduction to Communion</h2>
+                <span class="toggle-icon">+</span>
+            </div>
+            <div class="section-content">
+                <p>The <span class="tooltip">Sacrament of Communion<span class="tooltip-content">Also known as the Eucharist, from the Greek word "eucharistia" meaning thanksgiving</span></span> stands as the central act of Christian worship, instituted by Jesus Christ himself during the Last Supper.</p>
+                
+                <p>Communion represents three profound realities:</p>
+                <ul style="margin: 1rem 0; padding-left: 2rem;">
+                    <li><strong>Christ's Real Presence:</strong> The spiritual presence of Jesus in the bread and wine</li>
+                    <li><strong>Spiritual Nourishment:</strong> Food for the soul and strength for the Christian journey</li>
+                    <li><strong>Covenant Remembrance:</strong> A memorial of Christ's sacrifice and God's faithfulness</li>
+                </ul>
+
+                <div class="scripture-verse">
+                    "And he took bread, gave thanks and broke it, and gave it to them, saying, 'This is my body given for you; do this in remembrance of me.'"
+                    <div class="verse-reference">Luke 22:19</div>
+                </div>
+
+                <p>Throughout history, this sacred meal has united Christians across cultures, denominations, and centuries, serving as both a deeply personal encounter with Christ and a communal celebration of faith.</p>
+            </div>
+        </div>
+
+        <!-- Biblical Foundations Section -->
+        <div class="section fade-in">
+            <div class="section-header" onclick="toggleSection(this)">
+                <h2>📖 Biblical Foundations</h2>
+                <span class="toggle-icon">+</span>
+            </div>
+            <div class="section-content">
+                <h3>The Institution of Communion</h3>
+                
+                <div class="scripture-verse">
+                    "While they were eating, Jesus took bread, and when he had given thanks, he broke it and gave it to his disciples, saying, 'Take and eat; this is my body.' Then he took a cup, and when he had given thanks, he gave it to them, saying, 'Drink from it, all of you. This is my blood of the covenant, which is poured out for many for the forgiveness of sins.'"
+                    <div class="verse-reference">Matthew 26:26-28</div>
+                </div>
+
+                <p>The Greek word <span class="tooltip">"klao"<span class="tooltip-content">Greek: κλάω - meaning "to break." This breaking of bread became a central symbol of Christ's broken body.</span></span> (to break) emphasizes the sacrificial nature of Christ's gift, while <span class="tooltip">"eucharisteo"<span class="tooltip-content">Greek: εὐχαριστέω - meaning "to give thanks." This is where we get the word "Eucharist."</span></span> (to give thanks) highlights the attitude of gratitude that should accompany this sacrament.</p>
+
+                <div class="scripture-verse">
+                    "For I received from the Lord what I also passed on to you: The Lord Jesus, on the night he was betrayed, took bread, and when he had given thanks, he broke it and said, 'This is my body, which is for you; do this in remembrance of me.'"
+                    <div class="verse-reference">1 Corinthians 11:23-24</div>
+                </div>
+
+                <h3>Cultural Context</h3>
+                <p>The Last Supper took place during <span class="tooltip">Passover<span class="tooltip-content">The Jewish festival commemorating God's deliverance of Israel from Egypt. Jesus transformed this meal of remembrance into a new covenant celebration.</span></span>, connecting Christ's sacrifice to the ancient story of God's deliverance. The bread and wine were common elements of Jewish meals, making this sacrament accessible and meaningful to early Christians.</p>
+
+                <div class="quiz-container">
+                    <div class="quiz-question">Match the Scripture to Its Key Theme:</div>
+                    <div class="quiz-options" id="scriptureQuiz">
+                        <div class="quiz-option" data-answer="remembrance">Matthew 26:26-28 - "Do this in remembrance of me"</div>
+                        <div class="quiz-option" data-answer="body">1 Corinthians 11:24 - "This is my body, which is for you"</div>
+                        <div class="quiz-option" data-answer="covenant">Luke 22:20 - "This cup is the new covenant in my blood"</div>
+                    </div>
+                    <button class="btn" onclick="checkScriptureQuiz()">Check Answers</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Early Church Practice Section -->
+        <div class="section fade-in">
+            <div class="section-header" onclick="toggleSection(this)">
+                <h2>⛪ Early Church Practice & Witness</h2>
+                <span class="toggle-icon">+</span>
+            </div>
+            <div class="section-content">
+                <h3>📅 Interactive Historical Timeline</h3>
+                <p style="margin-bottom: 1rem; font-style: italic; color: #666;">Click on any timeline item to explore more details!</p>
+                <div class="timeline">
+                    <div class="timeline-item" onclick="expandTimelineItem(this)" style="cursor: pointer;">
+                        <div class="timeline-date">50-60 AD</div>
+                        <h4>⛪ Apostolic Practice</h4>
+                        <p>Early Christians gathered weekly to "break bread" as described in Acts 2:42. This was both a meal and a sacred remembrance.</p>
+                        <div class="timeline-details" style="display: none; margin-top: 1rem; padding: 1rem; background: #f8f9ff; border-radius: 8px; border-left: 3px solid #00adee;">
+                            <strong>📖 Scripture Reference:</strong> Acts 2:42 - "They devoted themselves to the apostles' teaching and to fellowship, to the breaking of bread and to prayer."<br><br>
+                            <strong>🏛️ Historical Context:</strong> These early gatherings often took place in homes and combined a full meal (agape feast) with the sacred bread and wine ceremony. The practice was both communal and deeply spiritual.
+                        </div>
+                    </div>
+                    <div class="timeline-item" onclick="expandTimelineItem(this)" style="cursor: pointer;">
+                        <div class="timeline-date">100-110 AD</div>
+                        <h4>✍️ Ignatius of Antioch</h4>
+                        <p>Emphasized the unity of the church through the Eucharist and warned against those who denied Christ's real presence in the elements.</p>
+                        <div class="timeline-details" style="display: none; margin-top: 1rem; padding: 1rem; background: #f8f9ff; border-radius: 8px; border-left: 3px solid #00adee;">
+                            <strong>📜 Key Quote:</strong> "Take note of those who hold heterodox opinions... They abstain from the Eucharist and from prayer because they do not confess that the Eucharist is the flesh of our Savior Jesus Christ."<br><br>
+                            <strong>⚡ Impact:</strong> Ignatius was one of the first to clearly articulate the real presence of Christ in the Eucharist, establishing a theological foundation that would influence centuries of Christian thought.
+                        </div>
+                    </div>
+                    <div class="timeline-item" onclick="expandTimelineItem(this)" style="cursor: pointer;">
+                        <div class="timeline-date">150 AD</div>
+                        <h4>🛡️ Justin Martyr</h4>
+                        <p>Provided detailed descriptions of early Christian worship, including the celebration of Communion every Sunday.</p>
+                        <div class="timeline-details" style="display: none; margin-top: 1rem; padding: 1rem; background: #f8f9ff; border-radius: 8px; border-left: 3px solid #00adee;">
+                            <strong>📋 Worship Description:</strong> "On Sunday all gather in one place... bread is brought, and wine and water, and the president offers prayers and thanksgivings."<br><br>
+                            <strong>🎯 Significance:</strong> Justin's "First Apology" gives us one of the earliest detailed accounts of Christian liturgy, showing how structured worship had become by the mid-2nd century.
+                        </div>
+                    </div>
+                    <div class="timeline-item" onclick="expandTimelineItem(this)" style="cursor: pointer;">
+                        <div class="timeline-date">400 AD</div>
+                        <h4>🧠 Augustine</h4>
+                        <p>Developed theological understanding of the sacrament as both sign and reality, emphasizing spiritual transformation.</p>
+                        <div class="timeline-details" style="display: none; margin-top: 1rem; padding: 1rem; background: #f8f9ff; border-radius: 8px; border-left: 3px solid #00adee;">
+                            <strong>💡 Theological Innovation:</strong> Augustine distinguished between the "sacramentum" (outward sign) and "res sacramenti" (spiritual reality), helping explain how physical elements convey spiritual grace.<br><br>
+                            <strong>🌟 Famous Teaching:</strong> "If you are the body and members of Christ, then it is your sacrament that is placed on the table of the Lord."
+                        </div>
+                    </div>
+                </div>
+
+                <h3>Church Fathers' Testimony</h3>
+                
+                <div class="church-father-quote">
+                    "Take note of those who hold heterodox opinions on the grace of Jesus Christ which has come to us, and see how contrary their opinions are to the mind of God... They abstain from the Eucharist and from prayer because they do not confess that the Eucharist is the flesh of our Savior Jesus Christ."
+                    <div class="quote-author">- Ignatius of Antioch, Letter to the Smyrnaeans (110 AD)</div>
+                </div>
+
+                <div class="church-father-quote">
+                    "And this food is called among us Εὐχαριστία [the Eucharist], of which no one is allowed to partake but the man who believes that the things which we teach are true, and who has been washed with the washing that is for the remission of sins, and unto regeneration."
+                    <div class="quote-author">- Justin Martyr, First Apology (150 AD)</div>
+                </div>
+
+                <div class="church-father-quote">
+                    "What you see is the bread and the chalice; that is what your own eyes report to you. But what your faith obliges you to accept is that the bread is the body of Christ and the chalice is the blood of Christ."
+                    <div class="quote-author">- Augustine, Sermon 272 (400 AD)</div>
+                </div>
+
+                <h3>Early Liturgical Customs</h3>
+                <ul style="margin: 1rem 0; padding-left: 2rem;">
+                    <li><strong>Frequency:</strong> Weekly celebration on "the Lord's Day" (Sunday)</li>
+                    <li><strong>Preparation:</strong> Fasting and prayer before participation</li>
+                    <li><strong>Community:</strong> Shared meal emphasizing unity and equality</li>
+                    <li><strong>Elements:</strong> Bread and wine, often brought by the congregation</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Theological Themes Section -->
+        <div class="section fade-in">
+            <div class="section-header" onclick="toggleSection(this)">
+                <h2>✨ Theological Themes</h2>
+                <span class="toggle-icon">+</span>
+            </div>
+            <div class="section-content">
+                <h3>Four Central Themes</h3>
+                
+                <div style="display: grid; gap: 1.5rem; margin: 2rem 0;">
+                    <div style="background: linear-gradient(135deg, #f8f9ff 0%, #e8f8ff 100%); padding: 1.5rem; border-radius: 10px; border-left: 4px solid #383f94;">
+                        <h4 style="color: #383f94;">Real Presence</h4>
+                        <p>Christ is truly present in the Communion elements, not merely symbolically but spiritually and sacramentally. This presence transforms the ordinary bread and wine into sacred means of grace.</p>
+                    </div>
+                    
+                    <div style="background: linear-gradient(135deg, #f8f9ff 0%, #e8f8ff 100%); padding: 1.5rem; border-radius: 10px; border-left: 4px solid #00adee;">
+                        <h4 style="color: #00adee;">Sacrifice of Christ</h4>
+                        <p>Communion commemorates and makes present Christ's once-for-all sacrifice on the cross. It's not a re-sacrifice but a participation in the eternal offering of Christ.</p>
+                    </div>
+                    
+                    <div style="background: linear-gradient(135deg, #f8f9ff 0%, #e8f8ff 100%); padding: 1.5rem; border-radius: 10px; border-left: 4px solid #383f94;">
+                        <h4 style="color: #383f94;">Covenant Remembrance</h4>
+                        <p>The sacrament serves as a memorial (Greek: anamnesis) - not just remembering the past, but making the saving work of Christ present and active today.</p>
+                    </div>
+                    
+                    <div style="background: linear-gradient(135deg, #f8f9ff 0%, #e8f8ff 100%); padding: 1.5rem; border-radius: 10px; border-left: 4px solid #00adee;">
+                        <h4 style="color: #00adee;">Community Participation</h4>
+                        <p>Communion creates and expresses the unity of the church. As Paul writes, "Because there is one loaf, we, who are many, are one body" (1 Cor 10:17).</p>
+                    </div>
+                </div>
+
+                <div class="quiz-container">
+                    <div class="quiz-question">Theological Reflection Quiz</div>
+                    <p style="margin-bottom: 1rem;">Which aspect of Communion do you find most meaningful in your faith journey?</p>
+                    <div class="quiz-options" id="theologicalQuiz">
+                        <div class="quiz-option" onclick="selectTheological(this)">The real presence of Christ in the elements</div>
+                        <div class="quiz-option" onclick="selectTheological(this)">Remembrance of Christ's sacrifice for our sins</div>
+                        <div class="quiz-option" onclick="selectTheological(this)">Unity with other believers in the church</div>
+                        <div class="quiz-option" onclick="selectTheological(this)">Spiritual nourishment for daily life</div>
+                    </div>
+                    <div id="theologicalResponse" style="margin-top: 1rem; padding: 1rem; background: #f0f8ff; border-radius: 8px; display: none;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Practical Reflection Section -->
+        <div class="section fade-in">
+            <div class="section-header" onclick="toggleSection(this)">
+                <h2>💭 Practical Reflection</h2>
+                <span class="toggle-icon">+</span>
+            </div>
+            <div class="section-content">
+                <h3>Personal Reflection Questions</h3>
+                <p>Take time to thoughtfully consider these questions about your experience with Communion:</p>
+
+                <div class="reflection-area">
+                    <h4 style="color: #383f94; margin-bottom: 1rem;">How does participating in Communion shape your faith?</h4>
+                    <textarea class="reflection-textarea" id="reflection1" placeholder="Reflect on how Communion impacts your relationship with God, your understanding of Christ's sacrifice, and your spiritual growth..."></textarea>
+                </div>
+
+                <div class="reflection-area">
+                    <h4 style="color: #383f94; margin-bottom: 1rem;">How does Communion affect your sense of community with other believers?</h4>
+                    <textarea class="reflection-textarea" id="reflection2" placeholder="Consider how sharing in Communion connects you with your local church and the global body of Christ..."></textarea>
+                </div>
+
+                <div class="reflection-area">
+                    <h4 style="color: #383f94; margin-bottom: 1rem;">What preparation helps you approach Communion with reverence?</h4>
+                    <textarea class="reflection-textarea" id="reflection3" placeholder="Think about practices like prayer, fasting, confession, or meditation that prepare your heart..."></textarea>
+                </div>
+
+                <button class="btn" onclick="saveReflections()">Save My Reflections</button>
+                <button class="btn" onclick="loadReflections()">Load Previous Reflections</button>
+                
+                <div id="saveMessage" style="margin-top: 1rem; padding: 1rem; background: #e8f5e8; border-radius: 8px; display: none; color: #2e7d32;">
+                    Your reflections have been saved locally on your device.
+                </div>
+            </div>
+        </div>
+
+        <!-- Church Fathers Commentary Section -->
+        <div class="section fade-in">
+            <div class="section-header" onclick="toggleSection(this)">
+                <h2>📜 Church Fathers Commentary</h2>
+                <span class="toggle-icon">+</span>
+            </div>
+            <div class="section-content">
+                <h3>Deeper Insights from Early Christian Leaders</h3>
+                
+                <div class="church-father-quote">
+                    "He took from among creation that which is bread, and gave thanks, saying, 'This is my body.' The cup likewise, which is from among the creation to which we belong, he confessed to be his blood."
+                    <div class="quote-author">- Irenaeus, Against Heresies (180 AD)</div>
+                    <p style="margin-top: 1rem; font-style: normal; color: #666;"><strong>Context:</strong> Irenaeus emphasizes that Christ uses ordinary created elements (bread and wine) to convey extraordinary spiritual realities, affirming both the goodness of creation and the reality of the incarnation.</p>
+                </div>
+
+                <div class="church-father-quote">
+                    "Let that be deemed a proper Eucharist, which is administered either by the bishop, or by one to whom he has entrusted it. Wherever the bishop shall appear, there let the multitude also be; even as, wherever Jesus Christ is, there is the Catholic Church."
+                    <div class="quote-author">- Ignatius of Antioch, Letter to the Smyrnaeans (110 AD)</div>
+                    <p style="margin-top: 1rem; font-style: normal; color: #666;"><strong>Context:</strong> Ignatius connects proper celebration of the Eucharist with church unity and apostolic authority, emphasizing that Communion is not a private act but a communal celebration under proper leadership.</p>
+                </div>
+
+                <div class="church-father-quote">
+                    "If you are the body and members of Christ, then it is your sacrament that is placed on the table of the Lord; it is your sacrament that you receive. To that which you are you respond 'Amen' ('Yes, it is true!') and by responding to it you assent to it."
+                    <div class="quote-author">- Augustine, Sermon 272 (400 AD)</div>
+                    <p style="margin-top: 1rem; font-style: normal; color: #666;"><strong>Context:</strong> Augustine beautifully explains how Christians both receive Christ in Communion and become what they receive - the body of Christ in the world.</p>
+                </div>
+
+                <div class="church-father-quote">
+                    "And on the day called Sunday, all who live in cities or in the country gather together to one place, and the memoirs of the apostles or the writings of the prophets are read... Then we all rise together and pray, and bread is brought, and wine and water, and the president in like manner offers prayers and thanksgivings."
+                    <div class="quote-author">- Justin Martyr, First Apology (150 AD)</div>
+                    <p style="margin-top: 1rem; font-style: normal; color: #666;"><strong>Context:</strong> This provides one of our earliest detailed descriptions of Christian worship, showing how Scripture reading, prayer, and Communion formed the core of early Christian gatherings.</p>
+                </div>
+
+                <h3>From the Didache (Teaching of the Twelve Apostles, ~100 AD)</h3>
+                <div class="church-father-quote">
+                    "Now concerning the Eucharist, give thanks this way. First, concerning the cup: 'We thank thee, our Father, for the holy vine of David Thy servant, which You madest known to us through Jesus Thy Servant; to Thee be the glory forever.' And concerning the broken bread: 'We thank Thee, our Father, for the life and knowledge which You madest known to us through Jesus Thy Servant.'"
+                    <div class="quote-author">- Didache 9:1-3</div>
+                    <p style="margin-top: 1rem; font-style: normal; color: #666;"><strong>Context:</strong> The Didache preserves some of the earliest Eucharistic prayers, emphasizing thanksgiving and the connection between the physical elements and spiritual realities of life and knowledge in Christ.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Section toggle functionality
+        function toggleSection(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.toggle-icon');
+            
+            if (content.classList.contains('active')) {
+                content.classList.remove('active');
+                icon.textContent = '+';
+                icon.style.transform = 'rotate(0deg)';
+            } else {
+                content.classList.add('active');
+                icon.textContent = '−';
+                icon.style.transform = 'rotate(180deg)';
+            }
+            
+            updateProgress();
+        }
+
+        // Progress tracking
+        function updateProgress() {
+            const sections = document.querySelectorAll('.section-content');
+            const activeSections = document.querySelectorAll('.section-content.active');
+            const progress = (activeSections.length / sections.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        // Scripture quiz functionality
+        let scriptureQuizAnswered = false;
+        
+        function checkScriptureQuiz() {
+            if (scriptureQuizAnswered) return;
+            
+            const options = document.querySelectorAll('#scriptureQuiz .quiz-option');
+            const answers = {
+                'remembrance': '✅ Correct! This verse emphasizes the memorial aspect of Communion.',
+                'body': '✅ Correct! This verse focuses on Christ\'s body given for us.',
+                'covenant': '✅ Correct! This verse highlights the new covenant established through Christ\'s blood.'
+            };
+            
+            options.forEach(option => {
+                const answer = option.dataset.answer;
+                option.classList.add('correct');
+                const explanation = document.createElement('div');
+                explanation.innerHTML = `<small style="color: #2e7d32; font-weight: bold; margin-top: 0.5rem; display: block;">${answers[answer]}</small>`;
+                option.appendChild(explanation);
+            });
+            
+            scriptureQuizAnswered = true;
+            
+            // Update button
+            const button = document.querySelector('#scriptureQuiz + button');
+            button.textContent = '✅ Quiz Complete!';
+            button.style.background = '#4caf50';
+        }
+
+        // Theological reflection
+        function selectTheological(option) {
+            const options = document.querySelectorAll('#theologicalQuiz .quiz-option');
+            options.forEach(opt => {
+                opt.classList.remove('correct');
+                opt.style.background = 'white';
+                opt.style.borderColor = '#e0e0e0';
+            });
+            
+            option.classList.add('correct');
+            option.style.background = '#e8f5e8';
+            option.style.borderColor = '#4caf50';
+            
+            const responses = {
+                'The real presence of Christ in the elements': '🙏 This mystery of Christ\'s presence transforms ordinary bread and wine into sacred means of grace, offering us intimate communion with our Savior. Many find this aspect deeply moving as it makes Christ tangibly present in our worship.',
+                'Remembrance of Christ\'s sacrifice for our sins': '✝️ Through Communion, we don\'t just remember Christ\'s sacrifice intellectually, but participate in its ongoing power and grace for our lives. This active remembrance brings the cross into our present experience.',
+                'Unity with other believers in the church': '🤝 As we share one bread, we become one body - connected across time and space with all who call upon Christ\'s name. This unity transcends denominational boundaries and cultural differences.',
+                'Spiritual nourishment for daily life': '🌱 Just as our bodies need physical food, our souls need the spiritual sustenance that comes through this sacred meal. Many believers find this nourishment essential for their spiritual growth and daily walk with God.'
+            };
+            
+            const responseDiv = document.getElementById('theologicalResponse');
+            responseDiv.innerHTML = `<strong>💡 Personal Reflection:</strong> ${responses[option.textContent]}<br><br><em>Consider journaling about how this aspect of Communion has impacted your own faith journey.</em>`;
+            responseDiv.style.display = 'block';
+            responseDiv.style.animation = 'fadeIn 0.5s ease';
+        }
+
+        // Reflection saving and loading
+        function saveReflections() {
+            const reflection1 = document.getElementById('reflection1').value;
+            const reflection2 = document.getElementById('reflection2').value;
+            const reflection3 = document.getElementById('reflection3').value;
+            
+            if (!reflection1 && !reflection2 && !reflection3) {
+                alert('📝 Please write some reflections before saving!');
+                return;
+            }
+            
+            const reflections = {
+                reflection1: reflection1,
+                reflection2: reflection2,
+                reflection3: reflection3,
+                timestamp: new Date().toLocaleDateString(),
+                wordCount: (reflection1 + ' ' + reflection2 + ' ' + reflection3).split(' ').filter(word => word.length > 0).length
+            };
+            
+            localStorage.setItem('communionReflections', JSON.stringify(reflections));
+            
+            const message = document.getElementById('saveMessage');
+            message.innerHTML = `💾 Your reflections have been saved! (${reflections.wordCount} words written on ${reflections.timestamp})`;
+            message.style.display = 'block';
+            setTimeout(() => {
+                message.style.display = 'none';
+            }, 4000);
+        }
+
+        function loadReflections() {
+            const saved = localStorage.getItem('communionReflections');
+            if (saved) {
+                const reflections = JSON.parse(saved);
+                document.getElementById('reflection1').value = reflections.reflection1 || '';
+                document.getElementById('reflection2').value = reflections.reflection2 || '';
+                document.getElementById('reflection3').value = reflections.reflection3 || '';
+                
+                const wordCount = reflections.wordCount || 'Unknown';
+                alert(`📖 Reflections loaded from ${reflections.timestamp}!\n\n💭 Total words: ${wordCount}\n\nYour previous thoughts have been restored.`);
+            } else {
+                alert('📝 No saved reflections found.\n\nStart writing your thoughts and they\'ll be automatically saved as you type!');
+            }
+        }
+
+        // Timeline interaction
+        function expandTimelineItem(item) {
+            const details = item.querySelector('.timeline-details');
+            const isExpanded = details.style.display === 'block';
+            
+            // Close all other timeline details
+            document.querySelectorAll('.timeline-details').forEach(detail => {
+                detail.style.display = 'none';
+            });
+            
+            // Toggle current item
+            if (!isExpanded) {
+                details.style.display = 'block';
+                details.style.animation = 'fadeIn 0.5s ease';
+                item.style.transform = 'scale(1.02)';
+                item.style.boxShadow = '0 6px 20px rgba(56, 63, 148, 0.15)';
+            } else {
+                item.style.transform = 'scale(1)';
+                item.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)';
+            }
+        }
+
+        // Fade-in animation on scroll
+        function handleScrollAnimation() {
+            const elements = document.querySelectorAll('.fade-in');
+            elements.forEach(element => {
+                const elementTop = element.getBoundingClientRect().top;
+                const elementVisible = 150;
+                
+                if (elementTop < window.innerHeight - elementVisible) {
+                    element.classList.add('visible');
+                }
+            });
+        }
+
+        // Smooth scrolling
+        document.documentElement.style.scrollBehavior = 'smooth';
+
+        // Event listeners
+        window.addEventListener('scroll', handleScrollAnimation);
+        window.addEventListener('load', () => {
+            handleScrollAnimation();
+            updateProgress();
+        });
+
+        // Auto-save reflections as user types
+        document.querySelectorAll('.reflection-textarea').forEach(textarea => {
+            textarea.addEventListener('input', () => {
+                // Auto-save after 2 seconds of no typing
+                clearTimeout(textarea.saveTimeout);
+                textarea.saveTimeout = setTimeout(() => {
+                    const reflections = {
+                        reflection1: document.getElementById('reflection1').value,
+                        reflection2: document.getElementById('reflection2').value,
+                        reflection3: document.getElementById('reflection3').value,
+                        timestamp: new Date().toLocaleDateString()
+                    };
+                    localStorage.setItem('communionReflections', JSON.stringify(reflections));
+                }, 2000);
+            });
+        });
+
+        // Load reflections on page load
+        window.addEventListener('load', () => {
+            const saved = localStorage.getItem('communionReflections');
+            if (saved) {
+                const reflections = JSON.parse(saved);
+                document.getElementById('reflection1').value = reflections.reflection1 || '';
+                document.getElementById('reflection2').value = reflections.reflection2 || '';
+                document.getElementById('reflection3').value = reflections.reflection3 || '';
+            }
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98321b32041b7a5d',t:'MTc1ODU0NzI5NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
